@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+backend/venv/
+backend/.venv/
+venv/
+.venv/
+env/
+
+# Environment files and credentials
+.env
+backend/.env
+*.env
+!.env.example
+!backend/.env.example
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Frontend builds & cache
+frontend/dist/
+frontend/dist-ssr/
+frontend/.cache/
+dist/
+dist-ssr/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Uploaded files / User content
+backend/uploads/resumes/*
+!backend/uploads/resumes/.gitkeep
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
