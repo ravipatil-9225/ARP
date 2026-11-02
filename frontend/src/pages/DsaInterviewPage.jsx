@@ -2,9 +2,19 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { dsaApi } from '../api/client';
 import toast from 'react-hot-toast';
+import ProctoringWrapper from '../proctoring/components/ProctoringWrapper';
 
 export default function DsaInterviewPage() {
   const { applicationId } = useParams();
+
+  return (
+    <ProctoringWrapper applicationId={applicationId} sessionType="dsa">
+      <DsaInterviewContent applicationId={applicationId} />
+    </ProctoringWrapper>
+  );
+}
+
+function DsaInterviewContent({ applicationId }) {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);

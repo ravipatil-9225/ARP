@@ -121,3 +121,21 @@ export const candidateApi = {
   getRecommendations: () => api.get('/api/candidate/jobs/recommendations'),
 };
 
+// ── Proctoring & Security ────────────────────────────
+export const proctorApi = {
+  startSession: (appId, sessionType = 'voice') =>
+    api.post(`/api/proctor/${appId}/session/start?session_type=${sessionType}`),
+  recordConsent: (appId, data) => api.post(`/api/proctor/${appId}/consent`, data),
+  logEvents: (appId, data) => api.post(`/api/proctor/${appId}/events`, data),
+  uploadSnapshot: (appId, formData) =>
+    api.post(`/api/proctor/${appId}/snapshot`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  uploadAudioAnomaly: (appId, formData) =>
+    api.post(`/api/proctor/${appId}/audio-anomaly`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  finalizeSession: (appId, data = {}) => api.post(`/api/proctor/${appId}/session/finalize`, data),
+  getReport: (appId) => api.get(`/api/proctor/${appId}/report`),
+};
+

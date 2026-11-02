@@ -39,6 +39,8 @@ pnpm-debug.log*
 # Uploaded files / User content
 backend/uploads/resumes/*
 !backend/uploads/resumes/.gitkeep
+backend/uploads/proctor/*
+!backend/uploads/proctor/.gitkeep
 
 # IDE and OS files
 .vscode/

@@ -53,12 +53,29 @@ async def get_current_candidate(token: str = Depends(candidate_oauth2)):
     return candidate
 
 
+async def get_optional_candidate(token: Optional[str] = Depends(candidate_oauth2)) -> Optional[dict]:
+    """Decode JWT and return candidate if valid, else None."""
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        user_id: str = payload.get("sub")
+        role: str = payload.get("role")
+        if user_id and role == "candidate":
+            db = get_db()
+            return await db.candidates.find_one({"_id": ObjectId(user_id)})
+    except Exception:
+        pass
+    return None
+
+
 def _serialize_candidate(doc: dict) -> dict:
     return {
         "id": str(doc["_id"]),
         "name": doc.get("name", ""),
         "email": doc.get("email", ""),
         "phone": doc.get("phone", ""),
+        "prn_no": doc.get("prn_no", ""),
         "headline": doc.get("headline", ""),
         "location": doc.get("location", ""),
         "resume_url": doc.get("resume_url", ""),
@@ -197,6 +214,7 @@ async def update_profile(
     candidate: dict = Depends(get_current_candidate),
     name: str = Form(None),
     phone: str = Form(None),
+    prn_no: str = Form(None),
     headline: str = Form(None),
     location: str = Form(None),
     skills: str = Form(None),  # JSON array string
@@ -213,6 +231,8 @@ async def update_profile(
         update["name"] = name
     if phone is not None:
         update["phone"] = phone
+    if prn_no is not None:
+        update["prn_no"] = prn_no.strip()
     if headline is not None:
         update["headline"] = headline
     if location is not None:

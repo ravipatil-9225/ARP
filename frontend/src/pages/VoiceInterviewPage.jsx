@@ -2,9 +2,28 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { voiceApi } from '../api/client';
 import toast from 'react-hot-toast';
+import ProctoringWrapper from '../proctoring/components/ProctoringWrapper';
 
 export default function VoiceInterviewPage() {
   const { applicationId } = useParams();
+  const [isAiSpeaking, setIsAiSpeaking] = useState(false);
+
+  return (
+    <ProctoringWrapper
+      applicationId={applicationId}
+      sessionType="voice"
+      isAiSpeaking={isAiSpeaking}
+    >
+      <VoiceInterviewContent
+        applicationId={applicationId}
+        isAiSpeaking={isAiSpeaking}
+        setIsAiSpeaking={setIsAiSpeaking}
+      />
+    </ProctoringWrapper>
+  );
+}
+
+function VoiceInterviewContent({ applicationId, isAiSpeaking, setIsAiSpeaking }) {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -13,7 +32,6 @@ export default function VoiceInterviewPage() {
   const [answerText, setAnswerText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [isAiSpeaking, setIsAiSpeaking] = useState(false);
   const [lastEvaluation, setLastEvaluation] = useState(null);
   const [speechSupported, setSpeechSupported] = useState(true);
 
@@ -295,7 +313,7 @@ export default function VoiceInterviewPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'radial-gradient(ellipse at top, #141432 0%, #080811 100%)', color: '#f1f5f9', padding: '30px 20px' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         {/* Top Header Bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', background: 'rgba(18, 18, 43, 0.8)', padding: '16px 24px', borderRadius: '16px', border: '1px solid #252554' }}>
           <div>

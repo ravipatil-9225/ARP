@@ -1,0 +1,41 @@
+RIGHT CODE -
+
+def two_sum(nums, target):
+    """
+    Finds two indices such that nums[i] + nums[j] == target.
+    
+    Time Complexity:  O(N) - Single pass through the array
+    Space Complexity: O(N) - Hash map storing up to N elements
+    """
+    seen = {}  # Maps value -> index
+    
+    for i, num in enumerate(nums):
+        complement = target - num
+        
+        # If complement exists in map, return indices in ascending order
+        if complement in seen:
+            return [seen[complement], i]
+            
+        # Store current number and its index
+        seen[num] = i
+        
+    return []
+
+
+
+
+
+CHATGPT CODE - 
+class Solution:
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
+        seen = {}
+
+        for i, num in enumerate(nums):
+            complement = target - num
+
+            if complement in seen:
+                return [seen[complement], i]
+
+            seen[num] = i
+
+        return []

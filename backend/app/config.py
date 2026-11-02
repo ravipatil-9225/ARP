@@ -45,6 +45,10 @@ class Settings(BaseSettings):
     # Base URL
     BASE_URL: str = "http://localhost:8000"
 
+    # Proctoring & Anti-Cheat
+    PROCTORING_ENABLED: bool = False
+    GEMINI_MODEL_OCR: str = "gemini-1.5-flash"
+
     class Config:
         env_file = ".env"
         extra = "ignore"

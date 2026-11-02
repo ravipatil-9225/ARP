@@ -105,6 +105,7 @@ class CandidateRegister(BaseModel):
     phone: str
     college_or_company: str
     graduation_year: Optional[int] = None
+    prn_no: Optional[str] = None
 
 
 class CandidateOut(BaseModel):
@@ -113,6 +114,7 @@ class CandidateOut(BaseModel):
     email: str
     phone: str
     college_or_company: str
+    prn_no: Optional[str] = None
     created_at: datetime
 
 
@@ -243,4 +245,37 @@ class HRScheduleRequest(BaseModel):
     meeting_platform: Optional[Literal["google_meet", "microsoft_teams"]] = None
     custom_meeting_link: Optional[str] = None
     interviewer_notes: Optional[str] = None
+
+
+# ── Proctoring & Security Models ─────────────────────────────────────────────
+
+class ProctorConsentRequest(BaseModel):
+    version: str = "v1"
+
+
+class ProctorEventIn(BaseModel):
+    client_event_id: str
+    event_type: str
+    occurred_at: datetime
+    detail: Optional[str] = ""
+    duration_seconds: Optional[float] = None
+    metadata: Optional[dict] = {}
+
+
+class ProctorEventsBatchRequest(BaseModel):
+    events: List[ProctorEventIn]
+
+
+class ProctorSessionStartResponse(BaseModel):
+    session_id: str
+    application_id: str
+    proctoring_enabled: bool
+    status: str
+    consent_accepted: bool
+    session_type: str
+
+
+class ProctorFinalizeRequest(BaseModel):
+    summary: Optional[str] = None
+
 

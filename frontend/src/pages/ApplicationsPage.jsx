@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { applicationsApi, jobsApi } from '../api/client';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import HrProctorReportModal from '../components/HrProctorReportModal';
 import toast from 'react-hot-toast';
 import {
   Briefcase,
@@ -95,6 +96,7 @@ export default function ApplicationsPage() {
   const [hrScoreModal, setHrScoreModal] = useState(null);
   const [hrScore, setHrScore] = useState('');
   const [hrNotes, setHrNotes] = useState('');
+  const [proctorReportAppId, setProctorReportAppId] = useState(null);
 
   useEffect(() => {
     Promise.all([applicationsApi.listForJob(jobId), jobsApi.get(jobId)])
@@ -442,13 +444,23 @@ export default function ApplicationsPage() {
                       </td>
 
                       <td style={{ textAlign: 'right' }}>
-                        <button
-                          className="btn btn-secondary btn-sm"
-                          onClick={() => setSelected(app)}
-                        >
-                          <span>Review Dossier</span>
-                          <ChevronRight size={14} />
-                        </button>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            style={{ padding: '4px 10px', fontSize: '0.75rem', color: '#818cf8', border: '1px solid rgba(99,102,241,0.2)' }}
+                            onClick={() => setProctorReportAppId(app.id)}
+                            title="Inspect proctoring flags and verification evidence"
+                          >
+                            🛡️ Proctor Report
+                          </button>
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => setSelected(app)}
+                          >
+                            <span>Review Dossier</span>
+                            <ChevronRight size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -676,15 +688,24 @@ export default function ApplicationsPage() {
                     borderTop: '1px solid var(--border-subtle)',
                   }}
                 >
-                  <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => {
-                      setHrScoreModal(selected);
-                      setHrScore(selected.hr_score || '');
-                    }}
-                  >
-                    <span>Record HR Interview Score</span>
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => {
+                        setHrScoreModal(selected);
+                        setHrScore(selected.hr_score || '');
+                      }}
+                    >
+                      <span>Record HR Interview Score</span>
+                    </button>
+                    <button
+                      className="btn btn-ghost btn-sm"
+                      style={{ padding: '6px 12px', fontSize: '0.8125rem', color: '#818cf8', border: '1px solid rgba(99,102,241,0.2)' }}
+                      onClick={() => setProctorReportAppId(selected.id)}
+                    >
+                      🛡️ Proctor Report
+                    </button>
+                  </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <button
@@ -764,6 +785,14 @@ export default function ApplicationsPage() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Proctoring & Security Audit Modal */}
+          {proctorReportAppId && (
+            <HrProctorReportModal
+              applicationId={proctorReportAppId}
+              onClose={() => setProctorReportAppId(null)}
+            />
           )}
         </main>
       </div>

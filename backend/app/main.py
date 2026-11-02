@@ -6,7 +6,7 @@ import os
 
 from app.database import connect_db, close_db
 from app.config import get_settings
-from app.routers import auth, jobs, applications, analytics, voice_interview, dsa_interview, hr_round, candidate_auth, recommendations
+from app.routers import auth, jobs, applications, analytics, voice_interview, dsa_interview, hr_round, candidate_auth, recommendations, proctor
 
 settings = get_settings()
 
@@ -16,13 +16,17 @@ async def lifespan(app: FastAPI):
     # Startup
     await connect_db()
     os.makedirs(settings.LOCAL_UPLOAD_DIR + "/resumes", exist_ok=True)
+    os.makedirs(settings.LOCAL_UPLOAD_DIR + "/proctor", exist_ok=True)
     try:
         from app.database import get_db
         db = get_db()
         # Enforce uniqueness: one candidate can only apply once per job
         await db.applications.create_index([("job_id", 1), ("candidate_email", 1)], unique=True)
+        # Proctoring indices
+        await db.proctor_events.create_index([("session_id", 1), ("client_event_id", 1)], unique=True)
+        await db.proctor_sessions.create_index([("application_id", 1), ("session_type", 1)], unique=True)
     except Exception as e:
-        print(f"[WARN] Could not ensure unique index on applications: {e}")
+        print(f"[WARN] Could not ensure unique index: {e}")
     yield
     # Shutdown
     await close_db()
@@ -54,10 +58,12 @@ app.include_router(dsa_interview.router)
 app.include_router(hr_round.router)
 app.include_router(candidate_auth.router)
 app.include_router(recommendations.router)
+app.include_router(proctor.router)
 
-# ── Static files (uploaded resumes) ──────────────────────────────────────────
-if os.path.exists("./uploads"):
-    app.mount("/uploads", StaticFiles(directory="./uploads"), name="uploads")
+# ── Static files (uploaded resumes only - proctor media is served via authorized route) ──
+resumes_dir = os.path.join(settings.LOCAL_UPLOAD_DIR, "resumes")
+if os.path.exists(resumes_dir):
+    app.mount("/uploads/resumes", StaticFiles(directory=resumes_dir), name="resumes")
 
 
 @app.get("/")

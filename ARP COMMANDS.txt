@@ -1,0 +1,7 @@
+cd c:\ARP\backend
+uvicorn app.main:app --reload --port 8000
+
+
+
+cd c:\ARP\frontend
+npm run dev
